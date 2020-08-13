@@ -71,14 +71,14 @@ class S3Test extends TestCase {
      */
     public function testCanDeleteImage() : void {
         $handler = new MockHandler();
-        $handler->append(new Result());
+        $handler->append(new Result(), new Result());
 
         $this->assertTrue(
             $this->getAdapter($handler)->delete('user', 'image-id'),
             'Expected adapter to delete image'
         );
 
-        $this->assertCount(1, $this->history, 'Expected one result');
+        $this->assertCount(2, $this->history, 'Expected two results');
         $command = $this->history->getLastCommand()->toArray();
         $this->assertSame($this->bucket, $command['Bucket']);
         $this->assertSame('u/s/e/user/i/m/a/image-id', $command['Key']);
@@ -90,6 +90,7 @@ class S3Test extends TestCase {
     public function testThrowsExceptionWhenDeletingImageFails() : void {
         $handler = new MockHandler();
         $handler->append(
+            new Result(),
             fn(CommandInterface $cmd, RequestInterface $req) => new S3Exception('some error', $cmd),
         );
 

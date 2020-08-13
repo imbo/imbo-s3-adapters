@@ -60,19 +60,18 @@ class S3 implements StorageInterface {
     }
 
     public function delete(string $user, string $imageIdentifier) : bool {
+        if (!$this->imageExists($user, $imageIdentifier)) {
+            throw new StorageException('File not found', 404);
+        }
+
         try {
             $this->client->deleteObject([
                 'Bucket' => $this->bucket,
                 'Key'    => $this->getImagePath($user, $imageIdentifier),
             ]);
         } catch (S3Exception $e) {
-            if (404 === $e->getStatusCode()) {
-                throw new StorageException('File not found', 404, $e);
-            }
-
             throw new StorageException('Unable to delete image', 500, $e);
         }
-
 
         return true;
     }

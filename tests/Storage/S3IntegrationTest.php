@@ -2,7 +2,6 @@
 namespace Imbo\Storage;
 
 use Aws\S3\S3Client;
-use PHPUnit\Framework\TestCase;
 use DateTime;
 use DateTimeZone;
 
@@ -10,13 +9,8 @@ use DateTimeZone;
  * @coversDefaultClass Imbo\Storage\S3
  * @group integration
  */
-class S3IntegrationTest extends TestCase {
-    private S3 $adapter;
-    private string $user    = 'user';
-    private string $imageId = 'image-id';
-    private string $fixturesDir;
-
-    public function setUp() : void {
+class S3IntegrationTest extends StorageTests {
+    private function checkEnv() : void {
         $required = [
             'S3_KEY',
             'S3_SECRET',
@@ -34,6 +28,23 @@ class S3IntegrationTest extends TestCase {
         if (count($missing)) {
             $this->markTestSkipped(sprintf('Missing required environment variable(s) for the integration tests: %s', join(', ', $missing)));
         }
+    }
+
+    protected function getAdapter() : S3 {
+        $this->checkEnv();
+
+        return new S3(
+            (string) getenv('S3_KEY'),
+            (string) getenv('S3_SECRET'),
+            (string) getenv('S3_BUCKET'),
+            (string) getenv('S3_REGION'),
+        );
+    }
+
+    public function setUp() : void {
+        parent::setUp();
+
+        $this->checkEnv();
 
         $client = new S3Client([
             'region'      => (string) getenv('S3_REGION'),
@@ -54,67 +65,5 @@ class S3IntegrationTest extends TestCase {
                 'Delete' => ['Objects' => $keysToDelete],
             ]);
         }
-
-        $this->adapter = new S3(
-            (string) getenv('S3_KEY'),
-            (string) getenv('S3_SECRET'),
-            (string) getenv('S3_BUCKET'),
-            (string) getenv('S3_REGION'),
-        );
-
-        $this->fixturesDir = __DIR__ . '/../fixtures';
-    }
-
-    /**
-     * @covers ::store
-     * @covers ::delete
-     * @covers ::getImage
-     * @covers ::getLastModified
-     * @covers ::getStatus
-     * @covers ::imageExists
-     */
-    public function testCanIntegrateWithS3() : void {
-        $this->assertTrue(
-            $this->adapter->getStatus(),
-            'Expected status to be true',
-        );
-
-        $this->assertFalse(
-            $this->adapter->imageExists($this->user, $this->imageId),
-            'Did not expect image to exist',
-        );
-
-        $this->assertTrue(
-            $this->adapter->store($this->user, $this->imageId, (string) file_get_contents($this->fixturesDir . '/test-image.png')),
-            'Expected adapter to store image',
-        );
-
-        $this->assertEqualsWithDelta(
-            (new DateTime('now', new DateTimeZone('UTC')))->getTimestamp(),
-            $this->adapter->getLastModified($this->user, $this->imageId)->getTimestamp(),
-            5,
-            'Expected timestamps to be equal',
-        );
-
-        $this->assertTrue(
-            $this->adapter->imageExists($this->user, $this->imageId),
-            'Expected image to exist',
-        );
-
-        $this->assertSame(
-            (string) file_get_contents($this->fixturesDir . '/test-image.png'),
-            $this->adapter->getImage($this->user, $this->imageId),
-            'Expected images to match'
-        );
-
-        $this->assertTrue(
-            $this->adapter->delete($this->user, $this->imageId),
-            'Expected image to be deleted',
-        );
-
-        $this->assertFalse(
-            $this->adapter->imageExists($this->user, $this->imageId),
-            'Did not expect image to exist',
-        );
     }
 }
