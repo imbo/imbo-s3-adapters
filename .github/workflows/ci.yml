@@ -49,3 +49,6 @@ jobs:
 
       - name: Run static code analysis
         run: vendor/bin/psalm
+
+      - name: Check coding standard
+        run: php-cs-fixer fix --dry-run --diff

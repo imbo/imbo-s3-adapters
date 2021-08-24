@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c4e0be6b375084fed1a15b51b3da490c",
+    "content-hash": "1893e3458a0bda195cf62921e1ab60e3",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -1351,6 +1351,58 @@
                 "source": "https://github.com/imbo/imbo-adapters-sdk/tree/main"
             },
             "time": "2021-08-24T18:08:24+00:00"
+        },
+        {
+            "name": "imbo/imbo-coding-standard",
+            "version": "v2.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/imbo/imbo-coding-standard.git",
+                "reference": "01e277ed4d030f9f516a756a6639dbf053d042d9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/imbo/imbo-coding-standard/zipball/01e277ed4d030f9f516a756a6639dbf053d042d9",
+                "reference": "01e277ed4d030f9f516a756a6639dbf053d042d9",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.4"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Imbo\\CodingStandard\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Christer Edvartsen",
+                    "email": "cogo@starzinger.net",
+                    "homepage": "https://github.com/christeredvartsen"
+                },
+                {
+                    "name": "Contributors",
+                    "homepage": "https://github.com/imbo"
+                }
+            ],
+            "description": "Imbo coding standard for PHP-CS-Fixer",
+            "homepage": "https://imbo.io/",
+            "keywords": [
+                "imbo"
+            ],
+            "support": {
+                "issues": "https://github.com/imbo/imbo-coding-standard/issues",
+                "source": "https://github.com/imbo/imbo-coding-standard/tree/v2.0.1"
+            },
+            "time": "2021-08-24T15:50:10+00:00"
         },
         {
             "name": "myclabs/deep-copy",
