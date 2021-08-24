@@ -113,6 +113,7 @@ class S3 implements StorageInterface {
 
     public function getStatus() : bool {
         try {
+            /** @var array{@metadata: array{statusCode: int}} */
             $result = $this->client->headBucket([
                 'Bucket' => $this->bucket,
             ]);

@@ -43,12 +43,12 @@ class S3 implements StorageInterface {
         return $this->client;
     }
 
-    public function storeImageVariation(string $user, string $imageIdentifier, string $imageData, int $width) : bool {
+    public function storeImageVariation(string $user, string $imageIdentifier, string $blob, int $width) : bool {
         try {
             $this->client->putObject([
                 'Bucket' => $this->bucket,
                 'Key'    => $this->getImagePath($user, $imageIdentifier, $width),
-                'Body'   => $imageData,
+                'Body'   => $blob,
             ]);
         } catch (S3Exception $e) {
             throw new StorageException('Unable to store image', 500);

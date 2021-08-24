@@ -60,7 +60,7 @@ class S3Test extends TestCase {
      */
     public function testThrowsExceptionWhenStoringImageFails() : void {
         $handler = new MockHandler();
-        $handler->append(fn(CommandInterface $cmd, RequestInterface $req) => new S3Exception('some error', $cmd));
+        $handler->append(fn(CommandInterface $cmd) => new S3Exception('some error', $cmd));
 
         $this->expectExceptionObject(new StorageException('Unable to store image', 500));
         $this->getAdapter($handler)->store('user', 'image-id', 'image data');
@@ -91,7 +91,7 @@ class S3Test extends TestCase {
         $handler = new MockHandler();
         $handler->append(
             new Result(),
-            fn(CommandInterface $cmd, RequestInterface $req) => new S3Exception('some error', $cmd),
+            fn(CommandInterface $cmd) => new S3Exception('some error', $cmd),
         );
 
         $this->expectExceptionObject(new StorageException('Unable to delete image', 500));
@@ -104,7 +104,7 @@ class S3Test extends TestCase {
     public function testThrowsExceptionWhenDeletingImageThatDoesNotExist() : void {
         $handler = new MockHandler();
         $handler->append(
-            fn(CommandInterface $cmd, RequestInterface $req) : S3Exception => new S3Exception(
+            fn(CommandInterface $cmd) : S3Exception => new S3Exception(
                 'some error',
                 $cmd,
                 ['response' => new Response(404)]
@@ -139,7 +139,7 @@ class S3Test extends TestCase {
     public function testThrowsExceptionWhenGettingImageThatDoesNotExist() : void {
         $handler = new MockHandler();
         $handler->append(
-            fn(CommandInterface $cmd, RequestInterface $req) => new S3Exception('some error', $cmd, ['response' => new Response(404)]),
+            fn(CommandInterface $cmd) => new S3Exception('some error', $cmd, ['response' => new Response(404)]),
         );
 
         $this->expectExceptionObject(new StorageException('File not found', 404));
@@ -152,7 +152,7 @@ class S3Test extends TestCase {
     public function testThrowsExceptionWhenGettingImageFails() : void {
         $handler = new MockHandler();
         $handler->append(
-            fn(CommandInterface $cmd, RequestInterface $req) => new S3Exception('some error', $cmd),
+            fn(CommandInterface $cmd) => new S3Exception('some error', $cmd),
         );
 
         $this->expectExceptionObject(new StorageException('Unable to get image', 500));
@@ -183,7 +183,7 @@ class S3Test extends TestCase {
     public function testThrowsExceptionWhenGettingLastModifiedOfImageThatDoesNotExist() : void {
         $handler = new MockHandler();
         $handler->append(
-            fn(CommandInterface $cmd, RequestInterface $req) => new S3Exception('some error', $cmd, ['response' => new Response(404)]),
+            fn(CommandInterface $cmd) => new S3Exception('some error', $cmd, ['response' => new Response(404)]),
         );
 
         $this->expectExceptionObject(new StorageException('File not found', 404));
@@ -196,7 +196,7 @@ class S3Test extends TestCase {
     public function testThrowsExceptionWhenGettingLastModifiedFails() : void {
         $handler = new MockHandler();
         $handler->append(
-            fn(CommandInterface $cmd, RequestInterface $req) => new S3Exception('some error', $cmd),
+            fn(CommandInterface $cmd) => new S3Exception('some error', $cmd),
         );
 
         $this->expectExceptionObject(new StorageException('Unable to get image', 500));
@@ -222,7 +222,7 @@ class S3Test extends TestCase {
     public function testStatusReturnsFalseOnError() : void {
         $handler = new MockHandler();
         $handler->append(
-            fn(CommandInterface $cmd, RequestInterface $req) => new S3Exception('some error', $cmd),
+            fn(CommandInterface $cmd) => new S3Exception('some error', $cmd),
         );
 
         $this->assertFalse(
@@ -255,7 +255,7 @@ class S3Test extends TestCase {
     public function testCheckForImageExistReturnsFalseOnFailure() : void {
         $handler = new MockHandler();
         $handler->append(
-            fn(CommandInterface $cmd, RequestInterface $req) => new S3Exception('some error', $cmd),
+            fn(CommandInterface $cmd) => new S3Exception('some error', $cmd),
         );
 
         $this->assertFalse(

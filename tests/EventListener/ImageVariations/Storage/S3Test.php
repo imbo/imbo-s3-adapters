@@ -58,7 +58,7 @@ class S3Test extends TestCase {
      */
     public function testThrowsExceptionWhenStoringImageVariationFails() : void {
         $handler = new MockHandler();
-        $handler->append(fn(CommandInterface $cmd, RequestInterface $req) => new S3Exception('some error', $cmd));
+        $handler->append(fn(CommandInterface $cmd) => new S3Exception('some error', $cmd));
 
         $this->expectExceptionObject(new StorageException('Unable to store image', 500));
         $this->getAdapter($handler)->storeImageVariation('user', 'image-id', 'image data', 100);
@@ -114,7 +114,7 @@ class S3Test extends TestCase {
      */
     public function testThrowsExceptionWhenDeletingSpecificImageVariationThatDoesNotExist() : void {
         $handler = new MockHandler();
-        $handler->append(fn(CommandInterface $cmd, RequestInterface $req) => new S3Exception('some error', $cmd, ['response' => new Response(404)]));
+        $handler->append(fn(CommandInterface $cmd) => new S3Exception('some error', $cmd, ['response' => new Response(404)]));
 
         $this->expectExceptionObject(new StorageException('File not found', 404));
         $this->getAdapter($handler)->deleteImageVariations('user', 'image-id', 100);
@@ -125,7 +125,7 @@ class S3Test extends TestCase {
      */
     public function testThrowsExceptionWhenDeletingSpecificImageVariationFails() : void {
         $handler = new MockHandler();
-        $handler->append(fn(CommandInterface $cmd, RequestInterface $req) => new S3Exception('some error', $cmd));
+        $handler->append(fn(CommandInterface $cmd) => new S3Exception('some error', $cmd));
 
         $this->expectExceptionObject(new StorageException('Unable to delete image variation', 500));
         $this->getAdapter($handler)->deleteImageVariations('user', 'image-id', 100);
@@ -138,7 +138,7 @@ class S3Test extends TestCase {
         $handler = new MockHandler();
         $handler->append(
             new Result(['Contents' => [['Key' => 'some-key']]]),
-            fn(CommandInterface $cmd, RequestInterface $req) => new S3Exception('some error', $cmd),
+            fn(CommandInterface $cmd) => new S3Exception('some error', $cmd),
         );
 
         $this->expectExceptionObject(new StorageException('Unable to delete image variations', 500));
@@ -169,7 +169,7 @@ class S3Test extends TestCase {
     public function testGetImageVariationFailsWhenImageDoesNotExist() : void {
         $handler = new MockHandler();
         $handler->append(
-            fn(CommandInterface $cmd, RequestInterface $req) => new S3Exception('some error', $cmd, ['response' => new Response(404)]),
+            fn(CommandInterface $cmd) => new S3Exception('some error', $cmd, ['response' => new Response(404)]),
         );
 
         $this->expectExceptionObject(new StorageException('File not found', 404));
@@ -182,7 +182,7 @@ class S3Test extends TestCase {
     public function testGetImageVariationFailsWhenCommandFails() : void {
         $handler = new MockHandler();
         $handler->append(
-            fn(CommandInterface $cmd, RequestInterface $req) => new S3Exception('some error', $cmd),
+            fn(CommandInterface $cmd) => new S3Exception('some error', $cmd),
         );
 
         $this->expectExceptionObject(new StorageException('Unable to get image variation', 500));
