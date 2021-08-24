@@ -1,16 +1,17 @@
 <?php declare(strict_types=1);
 namespace Imbo\Storage;
 
-use Imbo\Exception\StorageException;
-use Aws\S3\S3Client;
-use Aws\S3\Exception\S3Exception;
-use DateTime;
 use Aws\Api\DateTimeResult;
+use Aws\S3\Exception\S3Exception;
+use Aws\S3\S3Client;
+use DateTime;
+use Imbo\Exception\StorageException;
 
 /**
  * AWS S3 storage adapter
  */
-class S3 implements StorageInterface {
+class S3 implements StorageInterface
+{
     private S3Client $client;
     private string $bucket;
 
@@ -28,7 +29,8 @@ class S3 implements StorageInterface {
      * @param string $region
      * @param array<string, mixed> $params
      */
-    public function __construct(string $key, string $secret, string $bucket, string $region, array $params = []) {
+    public function __construct(string $key, string $secret, string $bucket, string $region, array $params = [])
+    {
         $clientParams = array_replace_recursive([
             'region'      => $region,
             'credentials' => [
@@ -41,11 +43,13 @@ class S3 implements StorageInterface {
         $this->bucket = $bucket;
     }
 
-    public function getClient() : S3Client {
+    public function getClient(): S3Client
+    {
         return $this->client;
     }
 
-    public function store(string $user, string $imageIdentifier, string $imageData) : bool {
+    public function store(string $user, string $imageIdentifier, string $imageData): bool
+    {
         try {
             $this->client->putObject([
                 'Bucket' => $this->bucket,
@@ -59,7 +63,8 @@ class S3 implements StorageInterface {
         return true;
     }
 
-    public function delete(string $user, string $imageIdentifier) : bool {
+    public function delete(string $user, string $imageIdentifier): bool
+    {
         if (!$this->imageExists($user, $imageIdentifier)) {
             throw new StorageException('File not found', 404);
         }
@@ -76,7 +81,8 @@ class S3 implements StorageInterface {
         return true;
     }
 
-    public function getImage(string $user, string $imageIdentifier) : ?string {
+    public function getImage(string $user, string $imageIdentifier): ?string
+    {
         try {
             $result = $this->client->getObject([
                 'Bucket' => $this->bucket,
@@ -93,7 +99,8 @@ class S3 implements StorageInterface {
         return (string) $result->get('Body');
     }
 
-    public function getLastModified(string $user, string $imageIdentifier) : DateTime {
+    public function getLastModified(string $user, string $imageIdentifier): DateTime
+    {
         try {
             $result = $this->client->headObject([
                 'Bucket' => $this->bucket,
@@ -111,7 +118,8 @@ class S3 implements StorageInterface {
         return $result->get('LastModified');
     }
 
-    public function getStatus() : bool {
+    public function getStatus(): bool
+    {
         try {
             /** @var array{@metadata: array{statusCode: int}} */
             $result = $this->client->headBucket([
@@ -124,7 +132,8 @@ class S3 implements StorageInterface {
         return 200 === ($result['@metadata']['statusCode'] ?? null);
     }
 
-    public function imageExists(string $user, string $imageIdentifier) : bool {
+    public function imageExists(string $user, string $imageIdentifier): bool
+    {
         try {
             $this->client->headObject([
                 'Bucket' => $this->bucket,
@@ -144,7 +153,8 @@ class S3 implements StorageInterface {
      * @param string $imageIdentifier Image identifier
      * @return string
      */
-    protected function getImagePath(string $user, string $imageIdentifier) : string {
+    protected function getImagePath(string $user, string $imageIdentifier): string
+    {
         $userPath = str_pad($user, 3, '0', STR_PAD_LEFT);
 
         return implode('/', [

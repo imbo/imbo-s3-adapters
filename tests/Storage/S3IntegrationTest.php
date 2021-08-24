@@ -2,15 +2,15 @@
 namespace Imbo\Storage;
 
 use Aws\S3\S3Client;
-use DateTime;
-use DateTimeZone;
 
 /**
  * @coversDefaultClass Imbo\Storage\S3
  * @group integration
  */
-class S3IntegrationTest extends StorageTests {
-    private function checkEnv() : void {
+class S3IntegrationTest extends StorageTests
+{
+    private function checkEnv(): void
+    {
         $required = [
             'S3_KEY',
             'S3_SECRET',
@@ -30,7 +30,8 @@ class S3IntegrationTest extends StorageTests {
         }
     }
 
-    protected function getAdapter() : S3 {
+    protected function getAdapter(): S3
+    {
         $this->checkEnv();
 
         return new S3(
@@ -41,7 +42,8 @@ class S3IntegrationTest extends StorageTests {
         );
     }
 
-    public function setUp() : void {
+    public function setUp(): void
+    {
         parent::setUp();
 
         $this->checkEnv();
@@ -57,7 +59,7 @@ class S3IntegrationTest extends StorageTests {
 
         /** @var array{Contents: array<int, array{Key: string}>} */
         $objects      = $client->listObjects(['Bucket' => (string) getenv('S3_BUCKET')])->toArray();
-        $keysToDelete = array_map(fn(array $object) : array => ['Key' => $object['Key']], $objects['Contents'] ?? []);
+        $keysToDelete = array_map(fn (array $object): array => ['Key' => $object['Key']], $objects['Contents'] ?? []);
 
         if (!empty($keysToDelete)) {
             $client->deleteObjects([

@@ -1,28 +1,29 @@
 <?php declare(strict_types=1);
 namespace Imbo\EventListener\ImageVariations\Storage;
 
-use Imbo\Exception\StorageException;
-use PHPUnit\Framework\TestCase;
-use Aws\MockHandler;
-use Aws\Result;
+use Aws\CommandInterface;
 use Aws\History;
 use Aws\Middleware;
+use Aws\MockHandler;
+use Aws\Result;
 use Aws\S3\Exception\S3Exception;
-use Aws\CommandInterface;
 use GuzzleHttp\Psr7\Response;
-use Psr\Http\Message\RequestInterface;
+use Imbo\Exception\StorageException;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @coversDefaultClass Imbo\EventListener\ImageVariations\Storage\S3
  */
-class S3Test extends TestCase {
+class S3Test extends TestCase
+{
     private string $key    = 'key';
     private string $secret = 'secret';
     private string $bucket = 'bucket';
     private string $region = 'eu-west-1';
     private History $history;
 
-    private function getAdapter(MockHandler $handler) : S3 {
+    private function getAdapter(MockHandler $handler): S3
+    {
         $adapter = new S3($this->key, $this->secret, $this->bucket, $this->region, ['handler' => $handler]);
 
         $this->history = new History();
@@ -37,7 +38,8 @@ class S3Test extends TestCase {
      * @covers ::getImagePath
      * @covers ::getClient
      */
-    public function testCanStoreImageVariations() : void {
+    public function testCanStoreImageVariations(): void
+    {
         $handler = new MockHandler();
         $handler->append(new Result());
 
@@ -56,9 +58,10 @@ class S3Test extends TestCase {
     /**
      * @covers ::storeImageVariation
      */
-    public function testThrowsExceptionWhenStoringImageVariationFails() : void {
+    public function testThrowsExceptionWhenStoringImageVariationFails(): void
+    {
         $handler = new MockHandler();
-        $handler->append(fn(CommandInterface $cmd) => new S3Exception('some error', $cmd));
+        $handler->append(fn (CommandInterface $cmd) => new S3Exception('some error', $cmd));
 
         $this->expectExceptionObject(new StorageException('Unable to store image', 500));
         $this->getAdapter($handler)->storeImageVariation('user', 'image-id', 'image data', 100);
@@ -67,7 +70,8 @@ class S3Test extends TestCase {
     /**
      * @covers ::deleteImageVariations
      */
-    public function testCanDeleteImageVariations() : void {
+    public function testCanDeleteImageVariations(): void
+    {
         $handler = new MockHandler();
         $handler->append(
             new Result([
@@ -94,7 +98,8 @@ class S3Test extends TestCase {
     /**
      * @covers ::deleteImageVariations
      */
-    public function testCanDeleteSpecificImageVariation() : void {
+    public function testCanDeleteSpecificImageVariation(): void
+    {
         $handler = new MockHandler();
         $handler->append(new Result());
 
@@ -112,9 +117,10 @@ class S3Test extends TestCase {
     /**
      * @covers ::deleteImageVariations
      */
-    public function testThrowsExceptionWhenDeletingSpecificImageVariationThatDoesNotExist() : void {
+    public function testThrowsExceptionWhenDeletingSpecificImageVariationThatDoesNotExist(): void
+    {
         $handler = new MockHandler();
-        $handler->append(fn(CommandInterface $cmd) => new S3Exception('some error', $cmd, ['response' => new Response(404)]));
+        $handler->append(fn (CommandInterface $cmd) => new S3Exception('some error', $cmd, ['response' => new Response(404)]));
 
         $this->expectExceptionObject(new StorageException('File not found', 404));
         $this->getAdapter($handler)->deleteImageVariations('user', 'image-id', 100);
@@ -123,9 +129,10 @@ class S3Test extends TestCase {
     /**
      * @covers ::deleteImageVariations
      */
-    public function testThrowsExceptionWhenDeletingSpecificImageVariationFails() : void {
+    public function testThrowsExceptionWhenDeletingSpecificImageVariationFails(): void
+    {
         $handler = new MockHandler();
-        $handler->append(fn(CommandInterface $cmd) => new S3Exception('some error', $cmd));
+        $handler->append(fn (CommandInterface $cmd) => new S3Exception('some error', $cmd));
 
         $this->expectExceptionObject(new StorageException('Unable to delete image variation', 500));
         $this->getAdapter($handler)->deleteImageVariations('user', 'image-id', 100);
@@ -134,11 +141,12 @@ class S3Test extends TestCase {
     /**
      * @covers ::deleteImageVariations
      */
-    public function testThrowsExceptionWhenDeletingImageVariationsFails() : void {
+    public function testThrowsExceptionWhenDeletingImageVariationsFails(): void
+    {
         $handler = new MockHandler();
         $handler->append(
             new Result(['Contents' => [['Key' => 'some-key']]]),
-            fn(CommandInterface $cmd) => new S3Exception('some error', $cmd),
+            fn (CommandInterface $cmd) => new S3Exception('some error', $cmd),
         );
 
         $this->expectExceptionObject(new StorageException('Unable to delete image variations', 500));
@@ -148,7 +156,8 @@ class S3Test extends TestCase {
     /**
      * @covers ::getImageVariation
      */
-    public function testCanGetImageVariation() : void {
+    public function testCanGetImageVariation(): void
+    {
         $handler = new MockHandler();
         $handler->append(new Result(['Body' => 'image data']));
 
@@ -166,10 +175,11 @@ class S3Test extends TestCase {
     /**
      * @covers ::getImageVariation
      */
-    public function testGetImageVariationFailsWhenImageDoesNotExist() : void {
+    public function testGetImageVariationFailsWhenImageDoesNotExist(): void
+    {
         $handler = new MockHandler();
         $handler->append(
-            fn(CommandInterface $cmd) => new S3Exception('some error', $cmd, ['response' => new Response(404)]),
+            fn (CommandInterface $cmd) => new S3Exception('some error', $cmd, ['response' => new Response(404)]),
         );
 
         $this->expectExceptionObject(new StorageException('File not found', 404));
@@ -179,10 +189,11 @@ class S3Test extends TestCase {
     /**
      * @covers ::getImageVariation
      */
-    public function testGetImageVariationFailsWhenCommandFails() : void {
+    public function testGetImageVariationFailsWhenCommandFails(): void
+    {
         $handler = new MockHandler();
         $handler->append(
-            fn(CommandInterface $cmd) => new S3Exception('some error', $cmd),
+            fn (CommandInterface $cmd) => new S3Exception('some error', $cmd),
         );
 
         $this->expectExceptionObject(new StorageException('Unable to get image variation', 500));

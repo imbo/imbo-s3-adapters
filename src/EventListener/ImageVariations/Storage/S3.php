@@ -1,14 +1,15 @@
 <?php declare(strict_types=1);
 namespace Imbo\EventListener\ImageVariations\Storage;
 
-use Imbo\Exception\StorageException;
-use Aws\S3\S3Client;
 use Aws\S3\Exception\S3Exception;
+use Aws\S3\S3Client;
+use Imbo\Exception\StorageException;
 
 /**
  * AWS S3 storage adapter for the image variations event listener
  */
-class S3 implements StorageInterface {
+class S3 implements StorageInterface
+{
     private S3Client $client;
     private string $bucket;
 
@@ -26,7 +27,8 @@ class S3 implements StorageInterface {
      * @param string $region
      * @param array<string, mixed> $params
      */
-    public function __construct(string $key, string $secret, string $bucket, string $region, array $params = []) {
+    public function __construct(string $key, string $secret, string $bucket, string $region, array $params = [])
+    {
         $clientParams = array_replace_recursive([
             'region'      => $region,
             'credentials' => [
@@ -39,11 +41,13 @@ class S3 implements StorageInterface {
         $this->bucket = $bucket;
     }
 
-    public function getClient() : S3Client {
+    public function getClient(): S3Client
+    {
         return $this->client;
     }
 
-    public function storeImageVariation(string $user, string $imageIdentifier, string $blob, int $width) : bool {
+    public function storeImageVariation(string $user, string $imageIdentifier, string $blob, int $width): bool
+    {
         try {
             $this->client->putObject([
                 'Bucket' => $this->bucket,
@@ -57,7 +61,8 @@ class S3 implements StorageInterface {
         return true;
     }
 
-    public function getImageVariation(string $user, string $imageIdentifier, int $width) : ?string {
+    public function getImageVariation(string $user, string $imageIdentifier, int $width): ?string
+    {
         try {
             $result = $this->client->getObject([
                 'Bucket' => $this->bucket,
@@ -74,12 +79,13 @@ class S3 implements StorageInterface {
         return (string) $result->get('Body');
     }
 
-    public function deleteImageVariations(string $user, string $imageIdentifier, int $width = null) : bool {
+    public function deleteImageVariations(string $user, string $imageIdentifier, int $width = null): bool
+    {
         if (null !== $width) {
             try {
                 $this->client->deleteObject([
                     'Bucket' => $this->bucket,
-                    'Key'    => $this->getImagePath($user, $imageIdentifier, $width)
+                    'Key'    => $this->getImagePath($user, $imageIdentifier, $width),
                 ]);
             } catch (S3Exception $e) {
                 if (404 === $e->getStatusCode()) {
@@ -97,7 +103,7 @@ class S3 implements StorageInterface {
             'Bucket' => $this->bucket,
             'Prefix' => $this->getImagePath($user, $imageIdentifier),
         ])->toArray();
-        $keysToDelete = array_map(fn(array $object) : array => ['Key' => $object['Key']], $objects['Contents'] ?? []);
+        $keysToDelete = array_map(fn (array $object): array => ['Key' => $object['Key']], $objects['Contents'] ?? []);
 
         if (!empty($keysToDelete)) {
             try {
@@ -121,7 +127,8 @@ class S3 implements StorageInterface {
      * @param int $width Width of the image, in pixels
      * @return string
      */
-    private function getImagePath(string $user, string $imageIdentifier, int $width = null) : string {
+    private function getImagePath(string $user, string $imageIdentifier, int $width = null): string
+    {
         $userPath = str_pad($user, 3, '0', STR_PAD_LEFT);
         $parts = [
             'imageVariation',

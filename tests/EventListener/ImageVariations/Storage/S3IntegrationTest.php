@@ -8,13 +8,15 @@ use PHPUnit\Framework\TestCase;
  * @coversDefaultClass Imbo\EventListener\ImageVariations\Storage\S3
  * @group integration
  */
-class S3IntegrationTest extends TestCase {
+class S3IntegrationTest extends TestCase
+{
     private S3 $adapter;
     private string $user    = 'user';
     private string $imageId = 'image-id';
     private string $fixturesDir;
 
-    public function setUp() : void {
+    public function setUp(): void
+    {
         $required = [
             'S3_KEY',
             'S3_SECRET',
@@ -44,7 +46,7 @@ class S3IntegrationTest extends TestCase {
 
         /** @var array{Contents: array<int, array{Key: string}>} */
         $objects      = $client->listObjects(['Bucket' => (string) getenv('S3_BUCKET')])->toArray();
-        $keysToDelete = array_map(fn(array $object) : array => ['Key' => $object['Key']], $objects['Contents'] ?? []);
+        $keysToDelete = array_map(fn (array $object): array => ['Key' => $object['Key']], $objects['Contents'] ?? []);
 
         if (!empty($keysToDelete)) {
             $client->deleteObjects([
@@ -68,7 +70,8 @@ class S3IntegrationTest extends TestCase {
      * @covers ::getImageVariation
      * @covers ::deleteImageVariations
      */
-    public function testCanIntegrateWithS3() : void {
+    public function testCanIntegrateWithS3(): void
+    {
         foreach ([100, 200, 300] as $width) {
             $this->assertTrue(
                 $this->adapter->storeImageVariation($this->user, $this->imageId, (string) file_get_contents($this->fixturesDir . '/test-image.png'), $width),
