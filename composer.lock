@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.191.9",
+            "version": "3.191.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "67a1a0814a8e38c89d834d6cf9379752795c68fe"
+                "reference": "b0e09d3ca2a42edd0b14b9da065376cd3bdd6838"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/67a1a0814a8e38c89d834d6cf9379752795c68fe",
-                "reference": "67a1a0814a8e38c89d834d6cf9379752795c68fe",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/b0e09d3ca2a42edd0b14b9da065376cd3bdd6838",
+                "reference": "b0e09d3ca2a42edd0b14b9da065376cd3bdd6838",
                 "shasum": ""
             },
             "require": {
@@ -92,9 +92,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.191.9"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.191.10"
             },
-            "time": "2021-09-01T18:19:52+00:00"
+            "time": "2021-09-02T18:30:14+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -1298,12 +1298,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/imbo/imbo-adapters-sdk.git",
-                "reference": "5829bab6520e70e8affa948fe6de9281182f122b"
+                "reference": "1290f9646696abce8f09b301e1a9ea914e648353"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/imbo/imbo-adapters-sdk/zipball/5829bab6520e70e8affa948fe6de9281182f122b",
-                "reference": "5829bab6520e70e8affa948fe6de9281182f122b",
+                "url": "https://api.github.com/repos/imbo/imbo-adapters-sdk/zipball/1290f9646696abce8f09b301e1a9ea914e648353",
+                "reference": "1290f9646696abce8f09b301e1a9ea914e648353",
                 "shasum": ""
             },
             "require": {
@@ -1347,7 +1347,7 @@
                 "issues": "https://github.com/imbo/imbo-adapters-sdk/issues",
                 "source": "https://github.com/imbo/imbo-adapters-sdk/tree/main"
             },
-            "time": "2021-09-02T06:58:10+00:00"
+            "time": "2021-09-02T19:36:29+00:00"
         },
         {
             "name": "imbo/imbo-coding-standard",
