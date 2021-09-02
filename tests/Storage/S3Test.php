@@ -47,7 +47,7 @@ class S3Test extends TestCase
 
         $this->assertTrue(
             $this->getAdapter($handler)->store('user', 'image-id', 'image data'),
-            'Expected adapter to store image'
+            'Expected adapter to store image',
         );
 
         $this->assertCount(1, $this->history, 'Expected one result');
@@ -79,7 +79,7 @@ class S3Test extends TestCase
 
         $this->assertTrue(
             $this->getAdapter($handler)->delete('user', 'image-id'),
-            'Expected adapter to delete image'
+            'Expected adapter to delete image',
         );
 
         $this->assertCount(2, $this->history, 'Expected two results');
@@ -113,8 +113,8 @@ class S3Test extends TestCase
             fn (CommandInterface $cmd): S3Exception => new S3Exception(
                 'some error',
                 $cmd,
-                ['response' => new Response(404)]
-            )
+                ['response' => new Response(404)],
+            ),
         );
 
         $this->expectExceptionObject(new StorageException('File not found', 404));

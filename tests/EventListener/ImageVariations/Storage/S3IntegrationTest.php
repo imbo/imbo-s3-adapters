@@ -83,7 +83,7 @@ class S3IntegrationTest extends TestCase
             $this->assertSame(
                 (string) file_get_contents($this->fixturesDir . '/test-image.png'),
                 $this->adapter->getImageVariation($this->user, $this->imageId, $width),
-                'Expected images to match'
+                'Expected images to match',
             );
         }
 

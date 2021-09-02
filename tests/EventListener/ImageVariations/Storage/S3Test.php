@@ -45,7 +45,7 @@ class S3Test extends TestCase
 
         $this->assertTrue(
             $this->getAdapter($handler)->storeImageVariation('user', 'image-id', 'image data', 100),
-            'Expected adapter to store image'
+            'Expected adapter to store image',
         );
 
         $this->assertCount(1, $this->history, 'Expected one result');
@@ -81,12 +81,12 @@ class S3Test extends TestCase
                     ['Key' => 'key3', 'Size' => 789],
                 ],
             ]),
-            new Result()
+            new Result(),
         );
 
         $this->assertTrue(
             $this->getAdapter($handler)->deleteImageVariations('user', 'image-id'),
-            'Expected adapter to delete image variations'
+            'Expected adapter to delete image variations',
         );
 
         $this->assertCount(2, $this->history, 'Expected two results');
@@ -105,7 +105,7 @@ class S3Test extends TestCase
 
         $this->assertTrue(
             $this->getAdapter($handler)->deleteImageVariations('user', 'image-id', 100),
-            'Expected adapter to delete image variation'
+            'Expected adapter to delete image variation',
         );
 
         $this->assertCount(1, $this->history, 'Expected one result');
