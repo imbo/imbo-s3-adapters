@@ -9,6 +9,8 @@ use Aws\S3\S3Client;
  */
 class S3IntegrationTest extends StorageTests
 {
+    protected int $allowedTimestampDelta = 5;
+
     private function checkEnv(): void
     {
         $required = [
