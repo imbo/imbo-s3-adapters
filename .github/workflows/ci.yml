@@ -29,8 +29,7 @@ jobs:
 
       - name: Get Composer Cache Directory
         id: composer-cache-dir
-        run: |
-          echo "::set-output name=dir::$(composer config cache-files-dir)"
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - name: Cache Composer packages
         id: composer-cache
