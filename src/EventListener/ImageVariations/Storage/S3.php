@@ -13,7 +13,7 @@ class S3 implements StorageInterface
     private S3Client $client;
     private string $bucket;
 
-    /** @var array<string, mixed> */
+    /** @var array<string,mixed> */
     private array $params = [
         'version' => '2006-03-01',
     ];
@@ -25,7 +25,7 @@ class S3 implements StorageInterface
      * @param string $secret
      * @param string $bucket
      * @param string $region
-     * @param array<string, mixed> $params
+     * @param array<string,mixed> $params
      */
     public function __construct(string $key, string $secret, string $bucket, string $region, array $params = [])
     {
