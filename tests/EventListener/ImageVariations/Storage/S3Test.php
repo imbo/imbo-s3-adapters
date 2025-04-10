@@ -9,11 +9,10 @@ use Aws\Result;
 use Aws\S3\Exception\S3Exception;
 use GuzzleHttp\Psr7\Response;
 use Imbo\Exception\StorageException;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @coversDefaultClass Imbo\EventListener\ImageVariations\Storage\S3
- */
+#[CoversClass(S3::class)]
 class S3Test extends TestCase
 {
     private string $key    = 'key';
@@ -32,12 +31,6 @@ class S3Test extends TestCase
         return $adapter;
     }
 
-    /**
-     * @covers ::__construct
-     * @covers ::storeImageVariation
-     * @covers ::getImagePath
-     * @covers ::getClient
-     */
     public function testCanStoreImageVariations(): void
     {
         $handler = new MockHandler();
@@ -55,9 +48,6 @@ class S3Test extends TestCase
         $this->assertSame('image data', $command['Body']);
     }
 
-    /**
-     * @covers ::storeImageVariation
-     */
     public function testThrowsExceptionWhenStoringImageVariationFails(): void
     {
         $handler = new MockHandler();
@@ -67,9 +57,6 @@ class S3Test extends TestCase
         $this->getAdapter($handler)->storeImageVariation('user', 'image-id', 'image data', 100);
     }
 
-    /**
-     * @covers ::deleteImageVariations
-     */
     public function testCanDeleteImageVariations(): void
     {
         $handler = new MockHandler();
@@ -95,9 +82,6 @@ class S3Test extends TestCase
         $this->assertSame(['Objects' => [['Key' => 'key1'], ['Key' => 'key2'], ['Key' => 'key3']]], $command['Delete']);
     }
 
-    /**
-     * @covers ::deleteImageVariations
-     */
     public function testCanDeleteSpecificImageVariation(): void
     {
         $handler = new MockHandler();
@@ -114,9 +98,6 @@ class S3Test extends TestCase
         $this->assertSame('imageVariation/u/s/e/user/i/m/a/image-id/100', $command['Key']);
     }
 
-    /**
-     * @covers ::deleteImageVariations
-     */
     public function testThrowsExceptionWhenDeletingSpecificImageVariationThatDoesNotExist(): void
     {
         $handler = new MockHandler();
@@ -126,9 +107,6 @@ class S3Test extends TestCase
         $this->getAdapter($handler)->deleteImageVariations('user', 'image-id', 100);
     }
 
-    /**
-     * @covers ::deleteImageVariations
-     */
     public function testThrowsExceptionWhenDeletingSpecificImageVariationFails(): void
     {
         $handler = new MockHandler();
@@ -138,9 +116,6 @@ class S3Test extends TestCase
         $this->getAdapter($handler)->deleteImageVariations('user', 'image-id', 100);
     }
 
-    /**
-     * @covers ::deleteImageVariations
-     */
     public function testThrowsExceptionWhenDeletingImageVariationsFails(): void
     {
         $handler = new MockHandler();
@@ -153,9 +128,6 @@ class S3Test extends TestCase
         $this->getAdapter($handler)->deleteImageVariations('user', 'image-id');
     }
 
-    /**
-     * @covers ::getImageVariation
-     */
     public function testCanGetImageVariation(): void
     {
         $handler = new MockHandler();
@@ -172,9 +144,6 @@ class S3Test extends TestCase
         $this->assertSame('imageVariation/u/s/e/user/i/m/a/image-id/100', $command['Key']);
     }
 
-    /**
-     * @covers ::getImageVariation
-     */
     public function testGetImageVariationFailsWhenImageDoesNotExist(): void
     {
         $handler = new MockHandler();
@@ -186,9 +155,6 @@ class S3Test extends TestCase
         $this->getAdapter($handler)->getImageVariation('user', 'image-id', 100);
     }
 
-    /**
-     * @covers ::getImageVariation
-     */
     public function testGetImageVariationFailsWhenCommandFails(): void
     {
         $handler = new MockHandler();

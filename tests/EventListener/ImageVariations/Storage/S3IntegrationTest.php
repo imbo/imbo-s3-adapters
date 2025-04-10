@@ -2,12 +2,12 @@
 namespace Imbo\EventListener\ImageVariations\Storage;
 
 use Aws\S3\S3Client;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @coversDefaultClass Imbo\EventListener\ImageVariations\Storage\S3
- * @group integration
- */
+#[Group('integration')]
+#[CoversClass(S3::class)]
 class S3IntegrationTest extends TestCase
 {
     private S3 $adapter;
@@ -65,11 +65,6 @@ class S3IntegrationTest extends TestCase
         $this->fixturesDir = __DIR__ . '/../../../fixtures';
     }
 
-    /**
-     * @covers ::storeImageVariation
-     * @covers ::getImageVariation
-     * @covers ::deleteImageVariations
-     */
     public function testCanIntegrateWithS3(): void
     {
         foreach ([100, 200, 300] as $width) {

@@ -2,11 +2,11 @@
 namespace Imbo\Storage;
 
 use Aws\S3\S3Client;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
-/**
- * @coversDefaultClass Imbo\Storage\S3
- * @group integration
- */
+#[Group('integration')]
+#[CoversClass(S3::class)]
 class S3IntegrationTest extends StorageTests
 {
     protected int $allowedTimestampDelta = 5;

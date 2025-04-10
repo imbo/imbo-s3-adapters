@@ -11,11 +11,10 @@ use Aws\S3\Exception\S3Exception;
 use DateTime;
 use GuzzleHttp\Psr7\Response;
 use Imbo\Exception\StorageException;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @coversDefaultClass Imbo\Storage\S3
- */
+#[CoversClass(S3::class)]
 class S3Test extends TestCase
 {
     private string $key    = 'key';
@@ -34,12 +33,6 @@ class S3Test extends TestCase
         return $adapter;
     }
 
-    /**
-     * @covers ::__construct
-     * @covers ::store
-     * @covers ::getImagePath
-     * @covers ::getClient
-     */
     public function testCanStoreImages(): void
     {
         $handler = new MockHandler();
@@ -57,9 +50,6 @@ class S3Test extends TestCase
         $this->assertSame('image data', $command['Body']);
     }
 
-    /**
-     * @covers ::store
-     */
     public function testThrowsExceptionWhenStoringImageFails(): void
     {
         $handler = new MockHandler();
@@ -69,9 +59,6 @@ class S3Test extends TestCase
         $this->getAdapter($handler)->store('user', 'image-id', 'image data');
     }
 
-    /**
-     * @covers ::delete
-     */
     public function testCanDeleteImage(): void
     {
         $handler = new MockHandler();
@@ -88,9 +75,6 @@ class S3Test extends TestCase
         $this->assertSame('u/s/e/user/i/m/a/image-id', $command['Key']);
     }
 
-    /**
-     * @covers ::delete
-     */
     public function testThrowsExceptionWhenDeletingImageFails(): void
     {
         $handler = new MockHandler();
@@ -103,9 +87,6 @@ class S3Test extends TestCase
         $this->getAdapter($handler)->delete('user', 'image-id');
     }
 
-    /**
-     * @covers ::delete
-     */
     public function testThrowsExceptionWhenDeletingImageThatDoesNotExist(): void
     {
         $handler = new MockHandler();
@@ -121,9 +102,6 @@ class S3Test extends TestCase
         $this->getAdapter($handler)->delete('user', 'image-id');
     }
 
-    /**
-     * @covers ::getImage
-     */
     public function testCanGetImage(): void
     {
         $handler = new MockHandler();
@@ -140,9 +118,6 @@ class S3Test extends TestCase
         $this->assertSame('u/s/e/user/i/m/a/image-id', $command['Key']);
     }
 
-    /**
-     * @covers ::getImage
-     */
     public function testThrowsExceptionWhenGettingImageThatDoesNotExist(): void
     {
         $handler = new MockHandler();
@@ -154,9 +129,6 @@ class S3Test extends TestCase
         $this->getAdapter($handler)->getImage('user', 'image-id');
     }
 
-    /**
-     * @covers ::getImage
-     */
     public function testThrowsExceptionWhenGettingImageFails(): void
     {
         $handler = new MockHandler();
@@ -168,9 +140,6 @@ class S3Test extends TestCase
         $this->getAdapter($handler)->getImage('user', 'image-id');
     }
 
-    /**
-     * @covers ::getLastModified
-     */
     public function testCanGetImageLastModified(): void
     {
         $handler = new MockHandler();
@@ -187,9 +156,6 @@ class S3Test extends TestCase
         $this->assertSame('u/s/e/user/i/m/a/image-id', $command['Key']);
     }
 
-    /**
-     * @covers ::getLastModified
-     */
     public function testThrowsExceptionWhenGettingLastModifiedOfImageThatDoesNotExist(): void
     {
         $handler = new MockHandler();
@@ -201,9 +167,6 @@ class S3Test extends TestCase
         $this->getAdapter($handler)->getLastModified('user', 'image-id');
     }
 
-    /**
-     * @covers ::getLastModified
-     */
     public function testThrowsExceptionWhenGettingLastModifiedFails(): void
     {
         $handler = new MockHandler();
@@ -215,9 +178,6 @@ class S3Test extends TestCase
         $this->getAdapter($handler)->getLastModified('user', 'image-id');
     }
 
-    /**
-     * @covers ::getStatus
-     */
     public function testCanGetStatus(): void
     {
         $handler = new MockHandler();
@@ -229,9 +189,6 @@ class S3Test extends TestCase
         );
     }
 
-    /**
-     * @covers ::getStatus
-     */
     public function testStatusReturnsFalseOnError(): void
     {
         $handler = new MockHandler();
@@ -245,9 +202,6 @@ class S3Test extends TestCase
         );
     }
 
-    /**
-     * @covers ::imageExists
-     */
     public function testCanCanCheckIfImageExists(): void
     {
         $handler = new MockHandler();
@@ -264,9 +218,6 @@ class S3Test extends TestCase
         $this->assertSame('u/s/e/user/i/m/a/image-id', $command['Key']);
     }
 
-    /**
-     * @covers ::imageExists
-     */
     public function testCheckForImageExistReturnsFalseOnFailure(): void
     {
         $handler = new MockHandler();
