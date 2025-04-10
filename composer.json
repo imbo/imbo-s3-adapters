@@ -2,7 +2,9 @@
   "name": "imbo/imbo-s3-adapters",
   "type": "library",
   "description": "AWS S3 adapters for Imbo",
-  "keywords": [ "imbo" ],
+  "keywords": [
+    "imbo"
+  ],
   "homepage": "https://imbo.io/",
   "license": "MIT",
   "authors": [
@@ -10,22 +12,26 @@
       "name": "Christer Edvartsen",
       "email": "cogo@starzinger.net",
       "homepage": "https://github.com/christeredvartsen"
-    }, {
+    },
+    {
       "name": "Contributors",
       "homepage": "https://github.com/imbo"
     }
   ],
   "require": {
-    "php": ">=8.1",
-    "aws/aws-sdk-php": "^3.191"
+    "php": ">=8.3",
+    "aws/aws-sdk-php": "^3.342"
   },
   "require-dev": {
+    "friendsofphp/php-cs-fixer": "^3.75",
     "imbo/imbo": "dev-main",
     "imbo/imbo-adapters-sdk": "dev-main",
-    "imbo/imbo-coding-standard": "^2.0",
-    "phpunit/phpunit": "^10.0",
-    "psalm/plugin-phpunit": "^0.18.4",
-    "vimeo/psalm": "^5.5"
+    "imbo/imbo-coding-standard": "dev-main",
+    "phpstan/extension-installer": "^1.4",
+    "phpstan/phpstan": "^2.1",
+    "phpstan/phpstan-deprecation-rules": "^2.0",
+    "phpstan/phpstan-phpunit": "^2.0",
+    "phpunit/phpunit": "^12.1"
   },
   "autoload": {
     "psr-4": {
@@ -39,16 +45,20 @@
   },
   "scripts": {
     "test": "vendor/bin/phpunit",
-    "test:coverage": "vendor/bin/phpunit --coverage-html build/coverage --coverage-text",
-    "sa": "vendor/bin/psalm",
-    "cs": "php-cs-fixer fix --dry-run --diff",
+    "test:coverage": "vendor/bin/phpunit --coverage-html build/coverage",
+    "sa": "vendor/bin/phpstan analyze",
+    "cs": "vendor/bin/php-cs-fixer check --diff",
+    "cs:fix": "vendor/bin/php-cs-fixer fix --diff",
     "ci": [
-      "@sa",
       "@test",
+      "@sa",
       "@cs"
     ]
   },
   "config": {
-    "sort-packages": true
+    "sort-packages": true,
+    "allow-plugins": {
+      "phpstan/extension-installer": true
+    }
   }
 }
