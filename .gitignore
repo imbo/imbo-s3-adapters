@@ -1,6 +1,8 @@
-build
-vendor
-phpunit.xml
-.env
-.phpunit.result.cache
-.php-cs-fixer.cache
+/build
+/vendor
+/phpunit.xml
+/.env
+/.phpunit.result.cache
+/.php-cs-fixer.cache
+/.vscode
+/test.php

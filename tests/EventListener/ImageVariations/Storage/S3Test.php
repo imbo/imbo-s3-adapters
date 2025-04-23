@@ -7,6 +7,7 @@ use Aws\Middleware;
 use Aws\MockHandler;
 use Aws\Result;
 use Aws\S3\Exception\S3Exception;
+use Aws\S3\S3Client;
 use GuzzleHttp\Psr7\Response;
 use Imbo\Exception\StorageException;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -15,35 +16,36 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(S3::class)]
 class S3Test extends TestCase
 {
-    private string $key    = 'key';
-    private string $secret = 'secret';
-    private string $bucket = 'bucket';
-    private string $region = 'eu-west-1';
+    private string $bucketName = 'bucket';
     private History $history;
 
     private function getAdapter(MockHandler $handler): S3
     {
-        $adapter = new S3($this->key, $this->secret, $this->bucket, $this->region, ['handler' => $handler]);
-
         $this->history = new History();
-        $adapter->getClient()->getHandlerList()->appendSign(Middleware::history($this->history));
+        $client = new S3Client([
+            'version' => 'latest',
+            'region' => 'eu-west-1',
+            'credentials' => [
+                'key' => 'key',
+                'secret' => 'secret',
+            ],
+            'handler' => $handler,
+        ]);
+        $client
+            ->getHandlerList()
+            ->appendSign(Middleware::history($this->history));
 
-        return $adapter;
+        return new S3($this->bucketName, client: $client);
     }
 
     public function testCanStoreImageVariations(): void
     {
         $handler = new MockHandler();
         $handler->append(new Result());
-
-        $this->assertTrue(
-            $this->getAdapter($handler)->storeImageVariation('user', 'image-id', 'image data', 100),
-            'Expected adapter to store image',
-        );
-
+        $this->getAdapter($handler)->storeImageVariation('user', 'image-id', 'image data', 100);
         $this->assertCount(1, $this->history, 'Expected one result');
         $command = $this->history->getLastCommand()->toArray();
-        $this->assertSame($this->bucket, $command['Bucket']);
+        $this->assertSame($this->bucketName, $command['Bucket']);
         $this->assertSame('imageVariation/u/s/e/user/i/m/a/image-id/100', $command['Key']);
         $this->assertSame('image data', $command['Body']);
     }
@@ -71,14 +73,10 @@ class S3Test extends TestCase
             new Result(),
         );
 
-        $this->assertTrue(
-            $this->getAdapter($handler)->deleteImageVariations('user', 'image-id'),
-            'Expected adapter to delete image variations',
-        );
-
+        $this->getAdapter($handler)->deleteImageVariations('user', 'image-id');
         $this->assertCount(2, $this->history, 'Expected two results');
         $command = $this->history->getLastCommand()->toArray();
-        $this->assertSame($this->bucket, $command['Bucket']);
+        $this->assertSame($this->bucketName, $command['Bucket']);
         $this->assertSame(['Objects' => [['Key' => 'key1'], ['Key' => 'key2'], ['Key' => 'key3']]], $command['Delete']);
     }
 
@@ -86,15 +84,10 @@ class S3Test extends TestCase
     {
         $handler = new MockHandler();
         $handler->append(new Result());
-
-        $this->assertTrue(
-            $this->getAdapter($handler)->deleteImageVariations('user', 'image-id', 100),
-            'Expected adapter to delete image variation',
-        );
-
+        $this->getAdapter($handler)->deleteImageVariations('user', 'image-id', 100);
         $this->assertCount(1, $this->history, 'Expected one result');
         $command = $this->history->getLastCommand()->toArray();
-        $this->assertSame($this->bucket, $command['Bucket']);
+        $this->assertSame($this->bucketName, $command['Bucket']);
         $this->assertSame('imageVariation/u/s/e/user/i/m/a/image-id/100', $command['Key']);
     }
 
@@ -140,7 +133,7 @@ class S3Test extends TestCase
 
         $this->assertCount(1, $this->history, 'Expected one result');
         $command = $this->history->getLastCommand()->toArray();
-        $this->assertSame($this->bucket, $command['Bucket']);
+        $this->assertSame($this->bucketName, $command['Bucket']);
         $this->assertSame('imageVariation/u/s/e/user/i/m/a/image-id/100', $command['Key']);
     }
 

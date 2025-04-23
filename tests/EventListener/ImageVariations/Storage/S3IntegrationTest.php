@@ -36,17 +36,25 @@ class S3IntegrationTest extends TestCase
         }
 
         $client = new S3Client([
-            'region'      => (string) getenv('S3_REGION'),
-            'version'     => 'latest',
+            'region' => (string) getenv('S3_REGION'),
+            'version' => 'latest',
             'credentials' => [
-                'key'    => (string) getenv('S3_KEY'),
+                'key' => (string) getenv('S3_KEY'),
                 'secret' => (string) getenv('S3_SECRET'),
             ],
         ]);
 
-        /** @var array{Contents: array<int, array{Key: string}>} */
-        $objects      = $client->listObjects(['Bucket' => (string) getenv('S3_BUCKET')])->toArray();
-        $keysToDelete = array_map(fn (array $object): array => ['Key' => $object['Key']], $objects['Contents'] ?? []);
+        /** @var array{Contents?:array<array{Key:string}>} */
+        $objects = $client
+            ->listObjects(['Bucket' => (string) getenv('S3_BUCKET')])
+            ->toArray();
+
+        $keysToDelete = array_map(
+            fn (array $object): array => [
+                'Key' => $object['Key'],
+            ],
+            $objects['Contents'] ?? [],
+        );
 
         if (!empty($keysToDelete)) {
             $client->deleteObjects([
@@ -56,9 +64,9 @@ class S3IntegrationTest extends TestCase
         }
 
         $this->adapter = new S3(
+            (string) getenv('S3_BUCKET'),
             (string) getenv('S3_KEY'),
             (string) getenv('S3_SECRET'),
-            (string) getenv('S3_BUCKET'),
             (string) getenv('S3_REGION'),
         );
 
@@ -68,10 +76,7 @@ class S3IntegrationTest extends TestCase
     public function testCanIntegrateWithS3(): void
     {
         foreach ([100, 200, 300] as $width) {
-            $this->assertTrue(
-                $this->adapter->storeImageVariation($this->user, $this->imageId, (string) file_get_contents($this->fixturesDir . '/test-image.png'), $width),
-                sprintf('Expected adapter to store image with width %d', $width),
-            );
+            $this->adapter->storeImageVariation($this->user, $this->imageId, (string) file_get_contents($this->fixturesDir . '/test-image.png'), $width);
         }
 
         foreach ([100, 200, 300] as $width) {
@@ -82,14 +87,7 @@ class S3IntegrationTest extends TestCase
             );
         }
 
-        $this->assertTrue(
-            $this->adapter->deleteImageVariations($this->user, $this->imageId, 100),
-            'Expected image variation with width 100 to be deleted',
-        );
-
-        $this->assertTrue(
-            $this->adapter->deleteImageVariations($this->user, $this->imageId),
-            'Expected the rest of the image variations to be deleted',
-        );
+        $this->adapter->deleteImageVariations($this->user, $this->imageId, 100);
+        $this->adapter->deleteImageVariations($this->user, $this->imageId);
     }
 }

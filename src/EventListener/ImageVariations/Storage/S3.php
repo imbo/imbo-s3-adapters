@@ -3,54 +3,49 @@ namespace Imbo\EventListener\ImageVariations\Storage;
 
 use Aws\S3\Exception\S3Exception;
 use Aws\S3\S3Client;
+use GuzzleHttp\Psr7\Stream;
 use Imbo\Exception\StorageException;
 
-/**
- * AWS S3 storage adapter for the image variations event listener
- */
 class S3 implements StorageInterface
 {
     private S3Client $client;
-    private string $bucket;
-
-    /** @var array<string,mixed> */
-    private array $params = [
-        'version' => '2006-03-01',
-    ];
 
     /**
-     * Class constructor
+     * Create an S3 storage adapter
      *
-     * @param string $key
-     * @param string $secret
-     * @param string $bucket
-     * @param string $region
-     * @param array<string,mixed> $params
+     * @param string $bucketName The name of the bucket
+     * @param string $accessKey The access key for the bucket
+     * @param string $secret The secret key for the bucket
+     * @param string $region The region of the bucket
+     * @param array<mixed> $clientParams Extra parameters for the S3 client constructor
+     * @param ?S3Client $client Pre-configured S3 client. When specified none of the other paramters are used
      */
-    public function __construct(string $key, string $secret, string $bucket, string $region, array $params = [])
-    {
-        $clientParams = array_replace_recursive([
-            'region'      => $region,
-            'credentials' => [
-                'key'    => $key,
-                'secret' => $secret,
+    public function __construct(
+        private string $bucketName,
+        string $accessKey   = '',
+        string $secret      = '',
+        string $region      = '',
+        array $clientParams = [],
+        ?S3Client $client   = null,
+    ) {
+        $this->client = $client ?: new S3Client(array_replace_recursive(
+            [
+                'version' => 'latest',
+                'region' => $region,
+                'credentials' => [
+                    'key' => $accessKey,
+                    'secret' => $secret,
+                ],
             ],
-        ], $this->params, $params ?: []);
-
-        $this->client = new S3Client($clientParams);
-        $this->bucket = $bucket;
+            $clientParams,
+        ));
     }
 
-    public function getClient(): S3Client
-    {
-        return $this->client;
-    }
-
-    public function storeImageVariation(string $user, string $imageIdentifier, string $blob, int $width): bool
+    public function storeImageVariation(string $user, string $imageIdentifier, string $blob, int $width): true
     {
         try {
             $this->client->putObject([
-                'Bucket' => $this->bucket,
+                'Bucket' => $this->bucketName,
                 'Key'    => $this->getImagePath($user, $imageIdentifier, $width),
                 'Body'   => $blob,
             ]);
@@ -65,7 +60,7 @@ class S3 implements StorageInterface
     {
         try {
             $result = $this->client->getObject([
-                'Bucket' => $this->bucket,
+                'Bucket' => $this->bucketName,
                 'Key'    => $this->getImagePath($user, $imageIdentifier, $width),
             ]);
         } catch (S3Exception $e) {
@@ -76,15 +71,17 @@ class S3 implements StorageInterface
             throw new StorageException('Unable to get image variation', 500, $e);
         }
 
-        return (string) $result->get('Body');
+        /** @var ?Stream */
+        $body = $result->get('Body');
+        return $body ? (string) $body : null;
     }
 
-    public function deleteImageVariations(string $user, string $imageIdentifier, int $width = null): bool
+    public function deleteImageVariations(string $user, string $imageIdentifier, ?int $width = null): true
     {
         if (null !== $width) {
             try {
                 $this->client->deleteObject([
-                    'Bucket' => $this->bucket,
+                    'Bucket' => $this->bucketName,
                     'Key'    => $this->getImagePath($user, $imageIdentifier, $width),
                 ]);
             } catch (S3Exception $e) {
@@ -98,17 +95,19 @@ class S3 implements StorageInterface
             return true;
         }
 
-        /** @var array{Contents: array<int, array{Key: string}>} */
-        $objects      = $this->client->listObjects([
-            'Bucket' => $this->bucket,
+        $objects = $this->client->listObjects([
+            'Bucket' => $this->bucketName,
             'Prefix' => $this->getImagePath($user, $imageIdentifier),
         ])->toArray();
-        $keysToDelete = array_map(fn (array $object): array => ['Key' => $object['Key']], $objects['Contents'] ?? []);
+        $keysToDelete = array_map(
+            fn (array $object): array => ['Key' => $object['Key']],
+            $objects['Contents'] ?? [],
+        );
 
         if (!empty($keysToDelete)) {
             try {
                 $this->client->deleteObjects([
-                    'Bucket' => $this->bucket,
+                    'Bucket' => $this->bucketName,
                     'Delete' => ['Objects' => $keysToDelete],
                 ]);
             } catch (S3Exception $e) {
@@ -119,15 +118,7 @@ class S3 implements StorageInterface
         return true;
     }
 
-    /**
-     * Get the path to an image
-     *
-     * @param string $user The user which the image belongs to
-     * @param string $imageIdentifier Image identifier
-     * @param int $width Width of the image, in pixels
-     * @return string
-     */
-    private function getImagePath(string $user, string $imageIdentifier, int $width = null): string
+    private function getImagePath(string $user, string $imageIdentifier, ?int $width = null): string
     {
         $userPath = str_pad($user, 3, '0', STR_PAD_LEFT);
         $parts = [

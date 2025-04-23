@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 namespace Imbo\Storage;
 
+use Aws\Credentials\Credentials;
 use Aws\S3\S3Client;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
@@ -37,14 +38,14 @@ class S3IntegrationTest extends StorageTests
         $this->checkEnv();
 
         return new S3(
+            (string) getenv('S3_BUCKET'),
             (string) getenv('S3_KEY'),
             (string) getenv('S3_SECRET'),
-            (string) getenv('S3_BUCKET'),
             (string) getenv('S3_REGION'),
         );
     }
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -53,15 +54,14 @@ class S3IntegrationTest extends StorageTests
         $client = new S3Client([
             'region'      => (string) getenv('S3_REGION'),
             'version'     => 'latest',
-            'credentials' => [
-                'key'    => (string) getenv('S3_KEY'),
-                'secret' => (string) getenv('S3_SECRET'),
-            ],
+            'credentials' => new Credentials((string) getenv('S3_KEY'), (string) getenv('S3_SECRET')),
         ]);
 
-        /** @var array{Contents: array<int, array{Key: string}>} */
-        $objects      = $client->listObjects(['Bucket' => (string) getenv('S3_BUCKET')])->toArray();
-        $keysToDelete = array_map(fn (array $object): array => ['Key' => $object['Key']], $objects['Contents'] ?? []);
+        $objects = $client->listObjects(['Bucket' => (string) getenv('S3_BUCKET')])->toArray();
+        $keysToDelete = array_map(
+            fn (array $object): array => ['Key' => $object['Key']],
+            $objects['Contents'] ?? [],
+        );
 
         if (!empty($keysToDelete)) {
             $client->deleteObjects([
