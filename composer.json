@@ -20,10 +20,10 @@
   ],
   "require": {
     "php": ">=8.3",
-    "aws/aws-sdk-php": "^3.342"
+    "aws/aws-sdk-php": "^3.369"
   },
   "require-dev": {
-    "friendsofphp/php-cs-fixer": "^3.75",
+    "friendsofphp/php-cs-fixer": "^3.92",
     "imbo/imbo": "dev-main",
     "imbo/imbo-adapters-sdk": "dev-main",
     "imbo/imbo-coding-standard": "dev-main",
@@ -31,8 +31,8 @@
     "phpstan/phpstan": "^2.1",
     "phpstan/phpstan-deprecation-rules": "^2.0",
     "phpstan/phpstan-phpunit": "^2.0",
-    "phpunit/phpunit": "^12.1",
-    "symfony/var-dumper": "^7.2"
+    "phpunit/phpunit": "^12.",
+    "symfony/var-dumper": "^8.0 || ^7.4"
   },
   "autoload": {
     "psr-4": {
@@ -47,12 +47,12 @@
   "scripts": {
     "test": "vendor/bin/phpunit",
     "test:coverage": "vendor/bin/phpunit --coverage-html build/coverage",
-    "sa": "vendor/bin/phpstan analyze",
+    "sa": "vendor/bin/phpstan analyse",
     "cs": "vendor/bin/php-cs-fixer check --diff",
     "cs:fix": "vendor/bin/php-cs-fixer fix --diff",
     "ci": [
-      "@test",
       "@sa",
+      "@test",
       "@cs"
     ]
   },
