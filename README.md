@@ -1,7 +1,5 @@
 # AWS S3 storage adapters for Imbo
 
-[![CI](https://github.com/imbo/imbo-s3-adapters/workflows/CI/badge.svg)](https://github.com/imbo/imbo-s3-adapters/actions?query=workflow%3ACI)
-
 [AWS S3](https://aws.amazon.com/s3/) storage adapters for [Imbo](https://imbo.io).
 
 ## Installation
