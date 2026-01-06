@@ -3,6 +3,7 @@ namespace Imbo\Storage;
 
 use Aws\Credentials\Credentials;
 use Aws\S3\S3Client;
+use ImboSDK\Storage\StorageTests;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 
