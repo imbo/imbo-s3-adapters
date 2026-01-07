@@ -14,8 +14,8 @@ This package provides two storage adapters for Imbo. One for the main images, an
 use Imbo\Storage\S3 as MainStorage;
 use Imbo\EventListener\ImageVariations\Storage\S3 as ImageVariationStorage;
 
-$mainAdapter           = new MainStorage($keyId, $applicationKey, $bucketId, $bucketName);
-$imageVariationAdapter = new ImageVariationStorage($keyId, $applicationKey, $bucketId, $bucketName);
+$mainAdapter           = new MainStorage($bucketName, $accessKey, $secret, $region);
+$imageVariationAdapter = new ImageVariationStorage($bucketName, $accessKey, $secret, $region);
 ```
 
 ## Running integration tests
