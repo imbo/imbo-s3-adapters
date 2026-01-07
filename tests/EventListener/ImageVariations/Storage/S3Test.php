@@ -9,6 +9,7 @@ use Aws\Result;
 use Aws\S3\Exception\S3Exception;
 use Aws\S3\S3Client;
 use GuzzleHttp\Psr7\Response;
+use GuzzleHttp\Psr7\Utils;
 use Imbo\Exception\StorageException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
@@ -91,15 +92,6 @@ class S3Test extends TestCase
         $this->assertSame('imageVariation/u/s/e/user/i/m/a/image-id/100', $command['Key']);
     }
 
-    public function testThrowsExceptionWhenDeletingSpecificImageVariationThatDoesNotExist(): void
-    {
-        $handler = new MockHandler();
-        $handler->append(fn (CommandInterface $cmd) => new S3Exception('some error', $cmd, ['response' => new Response(404)]));
-
-        $this->expectExceptionObject(new StorageException('File not found', 404));
-        $this->getAdapter($handler)->deleteImageVariations('user', 'image-id', 100);
-    }
-
     public function testThrowsExceptionWhenDeletingSpecificImageVariationFails(): void
     {
         $handler = new MockHandler();
@@ -107,6 +99,15 @@ class S3Test extends TestCase
 
         $this->expectExceptionObject(new StorageException('Unable to delete image variation', 500));
         $this->getAdapter($handler)->deleteImageVariations('user', 'image-id', 100);
+    }
+
+    public function testThrowsExceptionWhenResultHasNoBody(): void
+    {
+        $handler = new MockHandler();
+        $handler->append(new Result());
+
+        $this->expectExceptionObject(new StorageException('Unable to get image variation', 500));
+        $this->getAdapter($handler)->getImageVariation('user', 'image-id', 100);
     }
 
     public function testThrowsExceptionWhenDeletingImageVariationsFails(): void
@@ -124,7 +125,7 @@ class S3Test extends TestCase
     public function testCanGetImageVariation(): void
     {
         $handler = new MockHandler();
-        $handler->append(new Result(['Body' => 'image data']));
+        $handler->append(new Result(['Body' => Utils::streamFor('image data')]));
 
         $this->assertSame(
             'image data',

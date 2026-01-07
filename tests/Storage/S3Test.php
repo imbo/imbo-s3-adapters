@@ -228,4 +228,13 @@ class S3Test extends TestCase
             'Did not expect image to exist',
         );
     }
+
+    public function testThrowsExceptionWhenResultDoesNotHaveValidLastModified(): void
+    {
+        $handler = new MockHandler();
+        $handler->append(new Result(['LastModified' => 1594895257]));
+
+        $this->expectExceptionObject(new StorageException('Unable to get image metadata', 500));
+        $this->getAdapter($handler)->getLastModified('user', 'image-id');
+    }
 }

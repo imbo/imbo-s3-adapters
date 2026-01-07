@@ -7,6 +7,7 @@ use Aws\S3\S3Client;
 use DateTime;
 use GuzzleHttp\Psr7\Stream;
 use Imbo\Exception\StorageException;
+use InvalidArgumentException;
 
 class S3 implements StorageInterface
 {
@@ -20,7 +21,8 @@ class S3 implements StorageInterface
      * @param string $secret The secret key for the bucket
      * @param string $region The region of the bucket
      * @param array<mixed> $clientParams Extra parameters for the S3 client constructor
-     * @param ?S3Client $client Pre-configured S3 client. When specified none of the other paramters are used
+     * @param ?S3Client $client Pre-configured S3 client. When specified none of the other parameters are used
+     * @throws StorageException
      */
     public function __construct(
         private string $bucketName,
@@ -30,14 +32,18 @@ class S3 implements StorageInterface
         array $clientParams = [],
         ?S3Client $client   = null,
     ) {
-        $this->client = $client ?: new S3Client(array_replace_recursive(
-            [
-                'version' => 'latest',
-                'region' => $region,
-                'credentials' => new Credentials($accessKey, $secret),
-            ],
-            $clientParams,
-        ));
+        try {
+            $this->client = $client ?: new S3Client(array_replace_recursive(
+                [
+                    'version' => 'latest',
+                    'region' => $region,
+                    'credentials' => new Credentials($accessKey, $secret),
+                ],
+                $clientParams,
+            ));
+        } catch (InvalidArgumentException $e) {
+            throw new StorageException('Unable to create S3 client', 500, $e);
+        }
     }
 
     public function store(string $user, string $imageIdentifier, string $imageData): true
