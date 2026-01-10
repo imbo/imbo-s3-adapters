@@ -1,4 +1,5 @@
 <?php declare(strict_types=1);
+
 namespace Imbo\Storage;
 
 use Aws\Credentials\Credentials;
@@ -6,6 +7,9 @@ use Aws\S3\S3Client;
 use ImboSDK\Storage\StorageTests;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
+
+use function count;
+use function sprintf;
 
 #[Group('integration')]
 #[CoversClass(S3::class)]
@@ -30,7 +34,7 @@ class S3IntegrationTest extends StorageTests
         }
 
         if (count($missing)) {
-            $this->markTestSkipped(sprintf('Missing required environment variable(s) for the integration tests: %s', join(', ', $missing)));
+            $this->markTestSkipped(sprintf('Missing required environment variable(s) for the integration tests: %s', implode(', ', $missing)));
         }
     }
 
@@ -53,8 +57,8 @@ class S3IntegrationTest extends StorageTests
         $this->checkEnv();
 
         $client = new S3Client([
-            'region'      => (string) getenv('S3_REGION'),
-            'version'     => 'latest',
+            'region' => (string) getenv('S3_REGION'),
+            'version' => 'latest',
             'credentials' => new Credentials((string) getenv('S3_KEY'), (string) getenv('S3_SECRET')),
         ]);
 

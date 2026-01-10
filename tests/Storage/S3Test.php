@@ -1,4 +1,5 @@
 <?php declare(strict_types=1);
+
 namespace Imbo\Storage;
 
 use Aws\Api\DateTimeResult;

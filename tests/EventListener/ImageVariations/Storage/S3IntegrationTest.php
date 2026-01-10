@@ -1,4 +1,5 @@
 <?php declare(strict_types=1);
+
 namespace Imbo\EventListener\ImageVariations\Storage;
 
 use Aws\Credentials\Credentials;
@@ -6,6 +7,9 @@ use Aws\S3\S3Client;
 use ImboSDK\EventListener\ImageVariations\Storage\StorageTests;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
+
+use function count;
+use function sprintf;
 
 #[Group('integration')]
 #[CoversClass(S3::class)]
@@ -28,7 +32,7 @@ class S3IntegrationTest extends StorageTests
         }
 
         if (count($missing)) {
-            $this->markTestSkipped(sprintf('Missing required environment variable(s) for the integration tests: %s', join(', ', $missing)));
+            $this->markTestSkipped(sprintf('Missing required environment variable(s) for the integration tests: %s', implode(', ', $missing)));
         }
 
         return new S3(
@@ -39,7 +43,7 @@ class S3IntegrationTest extends StorageTests
         );
     }
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
