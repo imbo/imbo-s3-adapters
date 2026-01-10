@@ -1,4 +1,5 @@
 <?php declare(strict_types=1);
+
 namespace Imbo\Storage;
 
 use Aws\Credentials\Credentials;
@@ -9,28 +10,31 @@ use GuzzleHttp\Psr7\Stream;
 use Imbo\Exception\StorageException;
 use InvalidArgumentException;
 
+use const STR_PAD_LEFT;
+
 class S3 implements StorageInterface
 {
     private S3Client $client;
 
     /**
-     * Create an S3 storage adapter
+     * Create an S3 storage adapter.
      *
-     * @param string $bucketName The name of the bucket
-     * @param string $accessKey The access key for the bucket
-     * @param string $secret The secret key for the bucket
-     * @param string $region The region of the bucket
+     * @param string       $bucketName   The name of the bucket
+     * @param string       $accessKey    The access key for the bucket
+     * @param string       $secret       The secret key for the bucket
+     * @param string       $region       The region of the bucket
      * @param array<mixed> $clientParams Extra parameters for the S3 client constructor
-     * @param ?S3Client $client Pre-configured S3 client. When specified none of the other parameters are used
+     * @param ?S3Client    $client       Pre-configured S3 client. When specified none of the other parameters are used
+     *
      * @throws StorageException
      */
     public function __construct(
         private string $bucketName,
-        string $accessKey   = '',
-        string $secret      = '',
-        string $region      = '',
+        string $accessKey = '',
+        string $secret = '',
+        string $region = '',
         array $clientParams = [],
-        ?S3Client $client   = null,
+        ?S3Client $client = null,
     ) {
         try {
             $this->client = $client ?: new S3Client(array_replace_recursive(
@@ -51,8 +55,8 @@ class S3 implements StorageInterface
         try {
             $this->client->putObject([
                 'Bucket' => $this->bucketName,
-                'Key'    => $this->getImagePath($user, $imageIdentifier),
-                'Body'   => $imageData,
+                'Key' => $this->getImagePath($user, $imageIdentifier),
+                'Body' => $imageData,
             ]);
         } catch (S3Exception $e) {
             throw new StorageException('Unable to store image', 500, $e);
@@ -70,7 +74,7 @@ class S3 implements StorageInterface
         try {
             $this->client->deleteObject([
                 'Bucket' => $this->bucketName,
-                'Key'    => $this->getImagePath($user, $imageIdentifier),
+                'Key' => $this->getImagePath($user, $imageIdentifier),
             ]);
         } catch (S3Exception $e) {
             throw new StorageException('Unable to delete image', 500, $e);
@@ -84,7 +88,7 @@ class S3 implements StorageInterface
         try {
             $result = $this->client->getObject([
                 'Bucket' => $this->bucketName,
-                'Key'    => $this->getImagePath($user, $imageIdentifier),
+                'Key' => $this->getImagePath($user, $imageIdentifier),
             ]);
         } catch (S3Exception $e) {
             if (404 === $e->getStatusCode()) {
@@ -96,6 +100,7 @@ class S3 implements StorageInterface
 
         /** @var ?Stream */
         $body = $result->get('Body');
+
         return $body ? (string) $body : null;
     }
 
@@ -104,7 +109,7 @@ class S3 implements StorageInterface
         try {
             $result = $this->client->headObject([
                 'Bucket' => $this->bucketName,
-                'Key'    => $this->getImagePath($user, $imageIdentifier),
+                'Key' => $this->getImagePath($user, $imageIdentifier),
             ]);
         } catch (S3Exception $e) {
             if (404 === $e->getStatusCode()) {
@@ -142,7 +147,7 @@ class S3 implements StorageInterface
         try {
             $this->client->headObject([
                 'Bucket' => $this->bucketName,
-                'Key'    => $this->getImagePath($user, $imageIdentifier),
+                'Key' => $this->getImagePath($user, $imageIdentifier),
             ]);
         } catch (S3Exception $e) {
             return false;
