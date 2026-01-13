@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "75270214586a2c321d07fec3f95af963",
+    "content-hash": "bb33f4a81d0c64b6a2adb02903ab0785",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -62,16 +62,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.369.10",
+            "version": "3.369.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "e179090bf2d658be7be37afc146111966ba6f41b"
+                "reference": "014c521eae8eeb1f9562cb512523b17cd6c1bec7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/e179090bf2d658be7be37afc146111966ba6f41b",
-                "reference": "e179090bf2d658be7be37afc146111966ba6f41b",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/014c521eae8eeb1f9562cb512523b17cd6c1bec7",
+                "reference": "014c521eae8eeb1f9562cb512523b17cd6c1bec7",
                 "shasum": ""
             },
             "require": {
@@ -153,9 +153,9 @@
             "support": {
                 "forum": "https://github.com/aws/aws-sdk-php/discussions",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.369.10"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.369.11"
             },
-            "time": "2026-01-09T19:08:12+00:00"
+            "time": "2026-01-12T19:14:19+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -1623,12 +1623,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/imbo/imbo.git",
-                "reference": "fd636e405a216096a2c37372e23160708493482c"
+                "reference": "66077a161e98e53efe0521c905a59e3b89f13257"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/imbo/imbo/zipball/fd636e405a216096a2c37372e23160708493482c",
-                "reference": "fd636e405a216096a2c37372e23160708493482c",
+                "url": "https://api.github.com/repos/imbo/imbo/zipball/66077a161e98e53efe0521c905a59e3b89f13257",
+                "reference": "66077a161e98e53efe0521c905a59e3b89f13257",
                 "shasum": ""
             },
             "require": {
@@ -1696,20 +1696,20 @@
                 "issues": "https://github.com/imbo/imbo/issues",
                 "source": "https://github.com/imbo/imbo"
             },
-            "time": "2026-01-10T20:51:59+00:00"
+            "time": "2026-01-12T18:27:40+00:00"
         },
         {
             "name": "imbo/imbo-coding-standard",
-            "version": "v3.0.1",
+            "version": "v3.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/imbo/imbo-coding-standard.git",
-                "reference": "c692bf7c76dd4ce35a78fd1a91f7be16b238e86c"
+                "reference": "2964710bef2781ee1ce1d4519c7ecfda62f5494a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/imbo/imbo-coding-standard/zipball/c692bf7c76dd4ce35a78fd1a91f7be16b238e86c",
-                "reference": "c692bf7c76dd4ce35a78fd1a91f7be16b238e86c",
+                "url": "https://api.github.com/repos/imbo/imbo-coding-standard/zipball/2964710bef2781ee1ce1d4519c7ecfda62f5494a",
+                "reference": "2964710bef2781ee1ce1d4519c7ecfda62f5494a",
                 "shasum": ""
             },
             "require": {
@@ -1746,9 +1746,9 @@
             ],
             "support": {
                 "issues": "https://github.com/imbo/imbo-coding-standard/issues",
-                "source": "https://github.com/imbo/imbo-coding-standard/tree/v3.0.1"
+                "source": "https://github.com/imbo/imbo-coding-standard/tree/v3.0.2"
             },
-            "time": "2026-01-10T20:35:48+00:00"
+            "time": "2026-01-10T21:08:25+00:00"
         },
         {
             "name": "kubawerlos/php-cs-fixer-custom-fixers",
