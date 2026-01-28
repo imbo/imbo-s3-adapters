@@ -7,53 +7,30 @@ use Aws\S3\S3Client;
 use ImboSDK\EventListener\ImageVariations\Storage\StorageTests;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
-
-use function count;
-use function sprintf;
+use PHPUnit\Framework\Attributes\RequiresEnvironmentVariable;
 
 #[Group('integration')]
 #[CoversClass(S3::class)]
+#[RequiresEnvironmentVariable('S3_BUCKET')]
+#[RequiresEnvironmentVariable('S3_KEY')]
+#[RequiresEnvironmentVariable('S3_SECRET')]
+#[RequiresEnvironmentVariable('S3_REGION')]
 class S3IntegrationTest extends StorageTests
 {
     protected function getAdapter(): S3
     {
-        $required = [
-            'S3_KEY',
-            'S3_SECRET',
-            'S3_BUCKET',
-            'S3_REGION',
-        ];
-        $missing = [];
-
-        foreach ($required as $var) {
-            if (empty(getenv($var))) {
-                $missing[] = $var;
-            }
-        }
-
-        if (count($missing)) {
-            $this->markTestSkipped(sprintf('Missing required environment variable(s) for the integration tests: %s', implode(', ', $missing)));
-        }
-
-        return new S3(
-            (string) getenv('S3_BUCKET'),
-            (string) getenv('S3_KEY'),
-            (string) getenv('S3_SECRET'),
-            (string) getenv('S3_REGION'),
-        );
-    }
-
-    protected function setUp(): void
-    {
-        parent::setUp();
+        $bucket = (string) getenv('S3_BUCKET');
+        $key = (string) getenv('S3_KEY');
+        $secret = (string) getenv('S3_SECRET');
+        $region = (string) getenv('S3_REGION');
 
         $client = new S3Client([
-            'region' => (string) getenv('S3_REGION'),
+            'region' => $region,
             'version' => 'latest',
-            'credentials' => new Credentials((string) getenv('S3_KEY'), (string) getenv('S3_SECRET')),
+            'credentials' => new Credentials($key, $secret),
         ]);
 
-        $objects = $client->listObjects(['Bucket' => (string) getenv('S3_BUCKET')])->toArray();
+        $objects = $client->listObjects(['Bucket' => $bucket])->toArray();
         $keysToDelete = array_map(
             static fn (array $object): array => ['Key' => $object['Key']],
             $objects['Contents'] ?? [],
@@ -61,9 +38,11 @@ class S3IntegrationTest extends StorageTests
 
         if (!empty($keysToDelete)) {
             $client->deleteObjects([
-                'Bucket' => (string) getenv('S3_BUCKET'),
+                'Bucket' => $bucket,
                 'Delete' => ['Objects' => $keysToDelete],
             ]);
         }
+
+        return new S3($bucket, $key, $secret, $region);
     }
 }
