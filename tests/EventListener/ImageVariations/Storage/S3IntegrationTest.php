@@ -55,7 +55,7 @@ class S3IntegrationTest extends StorageTests
 
         $objects = $client->listObjects(['Bucket' => (string) getenv('S3_BUCKET')])->toArray();
         $keysToDelete = array_map(
-            fn (array $object): array => ['Key' => $object['Key']],
+            static fn (array $object): array => ['Key' => $object['Key']],
             $objects['Contents'] ?? [],
         );
 

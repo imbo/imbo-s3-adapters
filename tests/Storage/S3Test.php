@@ -57,7 +57,7 @@ class S3Test extends TestCase
     public function testThrowsExceptionWhenStoringImageFails(): void
     {
         $handler = new MockHandler();
-        $handler->append(fn (CommandInterface $cmd) => new S3Exception('some error', $cmd));
+        $handler->append(static fn (CommandInterface $cmd) => new S3Exception('some error', $cmd));
 
         $this->expectExceptionObject(new StorageException('Unable to store image', 500));
         $this->getAdapter($handler)->store('user', 'image-id', 'image data');
@@ -79,7 +79,7 @@ class S3Test extends TestCase
         $handler = new MockHandler();
         $handler->append(
             new Result(),
-            fn (CommandInterface $cmd) => new S3Exception('some error', $cmd),
+            static fn (CommandInterface $cmd) => new S3Exception('some error', $cmd),
         );
 
         $this->expectExceptionObject(new StorageException('Unable to delete image', 500));
@@ -90,7 +90,7 @@ class S3Test extends TestCase
     {
         $handler = new MockHandler();
         $handler->append(
-            fn (CommandInterface $cmd): S3Exception => new S3Exception(
+            static fn (CommandInterface $cmd): S3Exception => new S3Exception(
                 'some error',
                 $cmd,
                 ['response' => new Response(404)],
@@ -121,7 +121,7 @@ class S3Test extends TestCase
     {
         $handler = new MockHandler();
         $handler->append(
-            fn (CommandInterface $cmd) => new S3Exception('some error', $cmd, ['response' => new Response(404)]),
+            static fn (CommandInterface $cmd) => new S3Exception('some error', $cmd, ['response' => new Response(404)]),
         );
 
         $this->expectExceptionObject(new StorageException('File not found', 404));
@@ -132,7 +132,7 @@ class S3Test extends TestCase
     {
         $handler = new MockHandler();
         $handler->append(
-            fn (CommandInterface $cmd) => new S3Exception('some error', $cmd),
+            static fn (CommandInterface $cmd) => new S3Exception('some error', $cmd),
         );
 
         $this->expectExceptionObject(new StorageException('Unable to get image', 500));
@@ -159,7 +159,7 @@ class S3Test extends TestCase
     {
         $handler = new MockHandler();
         $handler->append(
-            fn (CommandInterface $cmd) => new S3Exception('some error', $cmd, ['response' => new Response(404)]),
+            static fn (CommandInterface $cmd) => new S3Exception('some error', $cmd, ['response' => new Response(404)]),
         );
 
         $this->expectExceptionObject(new StorageException('File not found', 404));
@@ -170,7 +170,7 @@ class S3Test extends TestCase
     {
         $handler = new MockHandler();
         $handler->append(
-            fn (CommandInterface $cmd) => new S3Exception('some error', $cmd),
+            static fn (CommandInterface $cmd) => new S3Exception('some error', $cmd),
         );
 
         $this->expectExceptionObject(new StorageException('Unable to get image', 500));
@@ -192,7 +192,7 @@ class S3Test extends TestCase
     {
         $handler = new MockHandler();
         $handler->append(
-            fn (CommandInterface $cmd) => new S3Exception('some error', $cmd),
+            static fn (CommandInterface $cmd) => new S3Exception('some error', $cmd),
         );
 
         $this->assertFalse(
@@ -221,7 +221,7 @@ class S3Test extends TestCase
     {
         $handler = new MockHandler();
         $handler->append(
-            fn (CommandInterface $cmd) => new S3Exception('some error', $cmd),
+            static fn (CommandInterface $cmd) => new S3Exception('some error', $cmd),
         );
 
         $this->assertFalse(
