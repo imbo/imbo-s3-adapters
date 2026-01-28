@@ -62,8 +62,6 @@ class S3 implements StorageInterface
         } catch (S3Exception $e) {
             throw new StorageException('Unable to store image variation', 500, $e);
         }
-
-        return;
     }
 
     public function getImageVariation(string $user, string $imageIdentifier, int $width): string
@@ -115,7 +113,7 @@ class S3 implements StorageInterface
             'Prefix' => $key,
         ])->toArray();
         $keysToDelete = array_map(
-            fn (array $object): array => ['Key' => $object['Key']],
+            static fn (array $object): array => ['Key' => $object['Key']],
             $objects['Contents'] ?? [],
         );
 
