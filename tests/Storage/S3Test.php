@@ -142,7 +142,7 @@ class S3Test extends TestCase
     public function testCanGetImageLastModified(): void
     {
         $handler = new MockHandler();
-        $handler->append(new Result(['LastModified' => DateTimeResult::fromEpoch(1594895257)]));
+        $handler->append(new Result(['LastModified' => DateTimeResult::fromEpoch(1_594_895_257)]));
 
         $this->assertEquals(
             new DateTime('@1594895257'),
@@ -233,7 +233,7 @@ class S3Test extends TestCase
     public function testThrowsExceptionWhenResultDoesNotHaveValidLastModified(): void
     {
         $handler = new MockHandler();
-        $handler->append(new Result(['LastModified' => 1594895257]));
+        $handler->append(new Result(['LastModified' => 1_594_895_257]));
 
         $this->expectExceptionObject(new StorageException('Unable to get image metadata', 500));
         $this->getAdapter($handler)->getLastModified('user', 'image-id');
